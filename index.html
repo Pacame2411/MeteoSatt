@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clima con OpenWeatherMap</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+
+        *{
+            text-align: center;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #eef4fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #005b96;
+        }
+        
+        input[type="text"], button {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        input[type="text"] {
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        #resultadoClima {
+            margin-top: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            background-color: #ffecec;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+        
+            input[type="text"], button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Información del Clima</h1>
+    <input type="text" id="ubicacion" placeholder="Escribe una ciudad, país o pueblo">
+    <button id="btnCargarClima">Cargar Clima</button>
+    <div id="resultadoClima"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#btnCargarClima').click(function() {
+                var ubicacion = $('#ubicacion').val().trim();
+                
+                if(ubicacion === '') {
+                    $('#resultadoClima').html('<p class="error">Por favor, ingrese una ubicación válida.</p>');
+                    return;
+                }
+        
+                $.ajax({
+                    url: 'https://api.openweathermap.org/data/2.5/weather',
+                    type: 'GET',
+                    data: {
+                        q: ubicacion,
+                        appid: 'd159c8ab7fa86b3acff9c47073db183a', // Reemplaza 'TU_API_KEY' con tu clave API real de OpenWeatherMap
+                        units: 'metric',
+                        lang: 'es'
+                    },
+                    success: function(res) {
+                        var contenido = '<h2>Clima en ' + res.name + ':</h2>';
+                        contenido += '<p>Temperatura: ' + res.main.temp + ' °C</p>';
+                        contenido += '<p>Sensación térmica: ' + res.main.feels_like + ' °C</p>';
+                        contenido += '<p>Humedad: ' + res.main.humidity + '%</p>';
+                        contenido += '<p>Presión atmosférica: ' + res.main.pressure + ' hPa</p>';
+                        $('#resultadoClima').html(contenido);
+                    },
+                    error: function() {
+                        $('#resultadoClima').html('<p class="error">Error al cargar el clima. Asegúrese de que la ubicación sea correcta y de que tenga una clave API válida.</p>');
+                    }
+                });
+            });
+        });
+            </script>
+</body>
+</html>
